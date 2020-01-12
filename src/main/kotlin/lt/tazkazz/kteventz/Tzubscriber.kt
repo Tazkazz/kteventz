@@ -2,7 +2,6 @@ package lt.tazkazz.kteventz
 
 import com.github.msemys.esjc.*
 import java.io.IOException
-import java.util.*
 
 /**
  * Tzubscriber persistent subscriber for the EventStore
@@ -74,7 +73,7 @@ abstract class Tzubscriber(
      * @param event RecordedEvent event
      * @param eventClass Tzevent event class
      */
-    private fun handleEvent(event: RecordedEvent, eventClass: Class<out Tzevent>, entityId: UUID) {
+    private fun handleEvent(event: RecordedEvent, eventClass: Class<out Tzevent>, entityId: String) {
         try {
             val tzevent = OBJECT_MAPPER.readValue(event.data, eventClass)
             val tzenvelope = Tzenvelope(entityType, entityId, tzevent)

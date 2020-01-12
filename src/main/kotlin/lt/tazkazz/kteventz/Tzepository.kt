@@ -1,7 +1,6 @@
 package lt.tazkazz.kteventz
 
 import com.github.msemys.esjc.ExpectedVersion
-import java.util.*
 
 /**
  * Tzentity repository for operations with entities
@@ -18,7 +17,7 @@ class Tzepository<T : Tzentity<T, C>, C : Tzcommand>(
      * @param command Tzcommand command
      * @return Tzentity with ID and new version
      */
-    fun save(command: C) = processCommand(newEntityWithIdAndVersion(), command)
+    fun save(newEntityId: String, command: C) = processCommand(newEntityWithIdAndVersion(newEntityId), command)
 
     /**
      * Update an existing entity in the EventStore
@@ -26,7 +25,7 @@ class Tzepository<T : Tzentity<T, C>, C : Tzcommand>(
      * @param command Tzcommand command
      * @return Tzentity with ID and new version
      */
-    fun update(entityId: UUID, command: C) = processCommand(loadEntity(entityId), command)
+    fun update(entityId: String, command: C) = processCommand(loadEntity(entityId), command)
 
     /**
      * Process Tzcommand command and write Tzevent events
@@ -53,7 +52,7 @@ class Tzepository<T : Tzentity<T, C>, C : Tzcommand>(
      * @param expectedVersion Expected version of the entity
      * @return Next expected version of the stream
      */
-    private fun writeEvents(events: List<Tzevent>, entityId: UUID, expectedVersion: Long) =
+    private fun writeEvents(events: List<Tzevent>, entityId: String, expectedVersion: Long) =
         eventzStore.writeEvents(entityType, entityId, events, expectedVersion)
 
     /**
@@ -72,15 +71,15 @@ class Tzepository<T : Tzentity<T, C>, C : Tzcommand>(
      * Create a new Tzentity entity with ID and version
      * @return Tzentity entity with ID and version
      */
-    private fun newEntityWithIdAndVersion() =
-        TzentityWithIdAndVersion(UUID.randomUUID(), ExpectedVersion.NO_STREAM, newEntity())
+    private fun newEntityWithIdAndVersion(newEntityId: String) =
+        TzentityWithIdAndVersion(newEntityId, ExpectedVersion.NO_STREAM, newEntity())
 
     /**
      * Load the most recent Tzentity entity
      * @param entityId Tzentity entity ID
      * @return Tzentity entity with ID and version
      */
-    private fun loadEntity(entityId: UUID): TzentityWithIdAndVersion<T> {
+    private fun loadEntity(entityId: String): TzentityWithIdAndVersion<T> {
         val entity = newEntity()
         val eventsWithVersion = eventzStore.readEvents(entityType, entityId)
         eventsWithVersion.events.forEach { entity.applyEvent(it) }

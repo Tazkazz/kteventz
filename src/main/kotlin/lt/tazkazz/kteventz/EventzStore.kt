@@ -2,7 +2,6 @@ package lt.tazkazz.kteventz
 
 import com.github.msemys.esjc.*
 import com.github.msemys.esjc.system.SystemConsumerStrategy
-import java.util.*
 import java.util.concurrent.CompletionException
 
 /**
@@ -75,7 +74,7 @@ class EventzStore(
      * @param expectedVersion Expected version of the stream
      * @return Next expected version of the stream
      */
-    fun writeEvents(entityType: String, entityId: UUID, events: List<Tzevent>, expectedVersion: Long): Long {
+    fun writeEvents(entityType: String, entityId: String, events: List<Tzevent>, expectedVersion: Long): Long {
         val streamId = "$entityType-$entityId"
         val eventData = events.map { it.serializeEvent(entityType, entityId) }
         val result = eventStore.tryAppendToStream(streamId, expectedVersion, eventData).join()
@@ -91,7 +90,7 @@ class EventzStore(
      * @param entityId Tzentity entity ID
      * @return Tzevent events with version
      */
-    fun readEvents(entityType: String, entityId: UUID): TzeventsWithVersion {
+    fun readEvents(entityType: String, entityId: String): TzeventsWithVersion {
         val streamId = "$entityType-$entityId"
         val slice = eventStore.readStreamEventsForward(streamId, 0, 4096, true).join()
         if (slice.status != SliceReadStatus.Success) {
