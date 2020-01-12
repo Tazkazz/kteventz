@@ -47,11 +47,11 @@ abstract class Tzubscriber(
     }
 
     private fun onEvent(subscription: PersistentSubscription, eventMessage: RetryableResolvedEvent) {
-        val event = eventMessage.event ?: return subscription.acknowledge(eventMessage)
-        val metadata = getEventMetadata(event)
-        val eventClass = getEventClass(metadata.eventClass)
-        if (eventClass != null && event.eventStreamId.startsWith(entityType)) {
-            handleEvent(event, eventClass, metadata.entityId)
+        val event = eventMessage.event
+        if (event != null && event.eventStreamId.startsWith(entityType)) {
+            val metadata = getEventMetadata(event)
+            val eventClass = getEventClass(metadata.eventClass)
+            eventClass?.let { handleEvent(event, it, metadata.entityId) }
         }
         subscription.acknowledge(eventMessage)
     }
