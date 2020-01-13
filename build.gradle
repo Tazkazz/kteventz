@@ -12,7 +12,8 @@ repositories {
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
     implementation "com.github.msemys:esjc:2.1.0"
-    implementation "com.fasterxml.jackson.core:jackson-databind:2.9.9.3"
+    implementation "com.fasterxml.jackson.core:jackson-databind:2.10.1"
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.10.1"
     implementation "com.fasterxml.jackson.module:jackson-module-kotlin:2.10.1"
 }
 

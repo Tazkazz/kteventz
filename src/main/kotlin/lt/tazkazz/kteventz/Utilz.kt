@@ -3,6 +3,9 @@ package lt.tazkazz.kteventz
 import com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES
 import com.fasterxml.jackson.databind.MapperFeature.DEFAULT_VIEW_INCLUSION
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.SerializationFeature.WRITE_DATES_AS_TIMESTAMPS
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.github.msemys.esjc.RecordedEvent
 import com.github.msemys.esjc.ResolvedEvent
 import java.io.IOException
@@ -14,10 +17,13 @@ import java.lang.reflect.ParameterizedType
  * Utilities for KtEventz library
  */
 
-val OBJECT_MAPPER: ObjectMapper = ObjectMapper()
-    .findAndRegisterModules()
-    .configure(DEFAULT_VIEW_INCLUSION, false)
-    .configure(FAIL_ON_UNKNOWN_PROPERTIES, false)
+val OBJECT_MAPPER: ObjectMapper = ObjectMapper().apply {
+    disable(DEFAULT_VIEW_INCLUSION)
+    disable(FAIL_ON_UNKNOWN_PROPERTIES)
+    disable(WRITE_DATES_AS_TIMESTAMPS)
+    registerModule(KotlinModule())
+    registerModule(JavaTimeModule())
+}
 
 /**
  * Get metadata for EventStore event
